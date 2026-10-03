@@ -1,5 +1,29 @@
-const cfg=window.APP_CONFIG;if(!cfg||cfg.SUPABASE_PUBLISHABLE_KEY.includes('PASTE_'))alert('Open config.js and paste your Supabase publishable key. Never paste a secret key.');const db=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});let records=[],dirty=new Map(),view='updates',user=null;const $=id=>document.getElementById(id),money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});function toast(m,bad=false){let t=$('toast');t.textContent=m;t.style.background=bad?'#7f1d1d':'#14532d';t.style.display='block';setTimeout(()=>t.style.display='none',2600)}
-$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginMsg').textContent='';let {data,error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error)return $('loginMsg').textContent=error.message;await enter(data.user)};$('logoutBtn').onclick=async()=>{await db.auth.signOut();location.reload()};async function enter(u){user=u;$('login').hidden=true;$('app').hidden=false;$('welcome').textContent='Signed in: '+u.email;await load()}
+document.body.classList.add("login-mode");const cfg=window.APP_CONFIG;if(!cfg||cfg.SUPABASE_PUBLISHABLE_KEY.includes('PASTE_'))alert('Open config.js and paste your Supabase publishable key. Never paste a secret key.');const db=supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});let records=[],dirty=new Map(),view='updates',user=null;const $=id=>document.getElementById(id),money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});function toast(m,bad=false){let t=$('toast');t.textContent=m;t.style.background=bad?'#7f1d1d':'#14532d';t.style.display='block';setTimeout(()=>t.style.display='none',2600)}
+$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginMsg').textContent='';let {data,error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});if (error) {
+$('loginMsg').textContent = error.message;
+return;
+}
+ 
+$('loginMsg').textContent = 'Opening secure workspace...';
+$('login').classList.add('login-success');
+ 
+setTimeout(() => {
+enter(data.user);
+}, 650);};$('logoutBtn').onclick=async()=>{await db.auth.signOut();location.reload()};async function enter(u) {
+user = u;
+ 
+$('login').hidden = true;
+document.body.classList.remove('login-mode');
+ 
+$('app').hidden = false;
+$('app').classList.add('app-enter');
+ 
+window.scrollTo(0, 0);
+ 
+$('welcome').textContent = 'Signed in: ' + u.email;
+ 
+await load();
+}$('welcome').textContent='Signed in: '+u.email;await load()}
 async function load(){let {data,error}=await db.from('audit_records').select('*').order('updated_at',{ascending:false});if(error)return toast(error.message,true);records=data||[];dirty.clear();fillFilters();render()}
 function fillFilters(){for(let [id,key,label] of [['branch','branch','All Branches'],['salesman','salesman','All Salespeople']]){let el=$(id),v=el.value;el.innerHTML=`<option value="">${label}</option>`+[...new Set(records.map(r=>r[key]).filter(Boolean))].sort().map(x=>`<option>${esc(x)}</option>`).join('');el.value=v}}
 function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function filtered(){let q=$('search').value.toLowerCase(),b=$('branch').value,s=$('salesman').value,st=$('status').value,d=$('fromDate').value;return records.filter(r=>(view!='updates'||r.audit_checked!==true)&&(!q||[r.sales_order,r.invoice_no,r.customer,r.salesman,r.item].join(' ').toLowerCase().includes(q))&&(!b||r.branch==b)&&(!s||r.salesman==s)&&(!st||r.status==st)&&(!d||String(r.updated_at).slice(0,10)>=d))}
