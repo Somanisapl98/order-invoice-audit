@@ -1,0 +1,20 @@
+ONE DRIVE COPY
+xcopy "%USERPROFILE%\Downloads\Order_Invoice_Audit_Dashboard" "%USERPROFILE%\OneDrive - Somanigrp\AuditDashboard" /E /I /Y
+cd /d "%USERPROFILE%\OneDrive - Somanigrp\AuditDashboard"
+notepad config.js
+
+TEST LOCALLY
+start index.html
+
+GITHUB FIRST PUBLISH
+git init
+git branch -M main
+git add .
+git commit -m "Secure audit dashboard"
+git remote add origin https://github.com/Somanisapl98/order-invoice-audit.git
+git push -u origin main
+
+FUTURE UPDATE
+git add .
+git commit -m "Update audit dashboard"
+git push origin main
