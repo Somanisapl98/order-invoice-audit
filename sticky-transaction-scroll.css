@@ -1,0 +1,8 @@
+/* Floating horizontal scrollbar for Transaction Review */
+#oaiTxnFloatScroll{position:fixed;left:max(10px,var(--txn-left,10px));width:var(--txn-width,calc(100vw - 20px));bottom:8px;height:18px;overflow-x:scroll;overflow-y:hidden;background:#edf4fc;border:1px solid #afc5df;border-radius:8px;box-shadow:0 3px 14px rgba(15,42,80,.28);z-index:2147483000;display:none;scrollbar-color:#5278a8 #dce7f5;scrollbar-width:auto}
+#oaiTxnFloatScroll>div{height:1px}
+#oaiTxnFloatScroll::-webkit-scrollbar{height:14px}
+#oaiTxnFloatScroll::-webkit-scrollbar-track{background:#dce7f5;border-radius:8px}
+#oaiTxnFloatScroll::-webkit-scrollbar-thumb{background:#5278a8;border:2px solid #dce7f5;border-radius:8px}
+#oaiTxnFloatScroll::-webkit-scrollbar-thumb:hover{background:#285c9c}
+@media(max-width:768px){#oaiTxnFloatScroll{left:8px!important;width:calc(100vw - 16px)!important;bottom:5px}}
